@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
 
 class AuthForm extends StatefulWidget {
+  AuthForm(this.submitFn);
+
+  final void Function(
+    String email,
+    String password,
+    String username,
+    bool isLogin,
+    BuildContext ctx,
+  ) submitFn;
+
   @override
   _AuthFormState createState() => _AuthFormState();
 }
@@ -18,10 +28,13 @@ class _AuthFormState extends State<AuthForm> {
 
     if (isValid) {
       _formKey.currentState.save();
-      print(_userEmail);
-      print(_userName);
-      print(_userPassword);
-      // Use those calues to send our auth request ...
+      widget.submitFn(
+        _userEmail.trim(),
+        _userPassword.trim(),
+        _userName.trim(),
+        _isLogin,
+        context,
+      );
     }
   }
 
@@ -54,7 +67,7 @@ class _AuthFormState extends State<AuthForm> {
                   ),
                   if (!_isLogin)
                     TextFormField(
-                    key: ValueKey('username'),
+                      key: ValueKey('username'),
                       validator: (value) {
                         if (value.isEmpty || value.length < 4) {
                           return 'Please enter at least 4 characters.';
